@@ -17,7 +17,32 @@ const Login: FC = () => {
   } = useForm<FormData>();
 
     const onSubmit: SubmitHandler<FormData> = async (data) => {
+      try {
+        const response = await fetch("http://localhost:8080/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
 
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error in login:", errorData);
+          return;
+        }
+
+        const result = await response.json();
+        console.log("Login ok:", result);
+        setSuccessMessage("Login successful!");
+
+        setTimeout(() => {
+          navigate("/home");
+          localStorage.setItem("username", result.username);
+        }, 2000);
+      } catch (error) {
+        console.error("Network error:", error);
+      }
     };
 
   const navigate = useNavigate();
@@ -77,7 +102,6 @@ const Login: FC = () => {
                 </a>
             </Typography>
           </form>
-
         </div>
       </section>
     </>
