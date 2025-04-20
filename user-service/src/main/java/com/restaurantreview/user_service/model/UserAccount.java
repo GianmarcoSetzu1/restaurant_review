@@ -12,10 +12,10 @@ public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    String username;
+    private String username;
     @Column(unique = true)
-    String email;
-    String password;
+    private String email;
+    private String password;
     @CreationTimestamp
-    LocalDateTime creationTimestamp;
+    private LocalDateTime creationTimestamp;
 }

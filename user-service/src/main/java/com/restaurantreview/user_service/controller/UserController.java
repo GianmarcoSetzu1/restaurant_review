@@ -1,5 +1,7 @@
 package com.restaurantreview.user_service.controller;
 
+import com.restaurantreview.user_service.dto.UserDTO;
+import com.restaurantreview.user_service.dto.UserLoginRequest;
 import com.restaurantreview.user_service.dto.UserRegisterRequest;
 import com.restaurantreview.user_service.model.UserAccount;
 import com.restaurantreview.user_service.service.UserService;
@@ -9,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5175")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -20,23 +22,33 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserAccount> registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
         try {
-            // Register the user by the service
             UserAccount registeredUser = userService.registerUser(userRegisterRequest);
-            return new ResponseEntity<>(registeredUser, HttpStatus.CREATED); // Return 201 (Created)
+            return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Error handling
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // Return 400
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Endpoint to get a user by ID
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) {
+        try {
+            UserDTO loggedUser = userService.loginUser(userLoginRequest);
+            if (loggedUser == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserAccount> getUserById(@PathVariable Long id) {
         UserAccount user = userService.getUserById(id);
         if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK); // Return 200 OK
+            return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // Return 404 Not Found
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 }
