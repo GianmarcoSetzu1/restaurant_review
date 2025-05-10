@@ -37,8 +37,10 @@ const Login: FC = () => {
         setSuccessMessage("Login successful!");
 
         setTimeout(() => {
+          localStorage.setItem("token", result.token);
+          localStorage.setItem("username", result.user.username);
+          localStorage.setItem("email", result.user.email);
           navigate("/home");
-          localStorage.setItem("username", result.username);
         }, 2000);
       } catch (error) {
         console.error("Network error:", error);
@@ -92,7 +94,7 @@ const Login: FC = () => {
                      className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"/>
               {ShowError(errors.password?.message)}
             </div>
-            <button type="submit" className="mx-auto block px-8 py-2 bg-blue-600 text-white rounded">
+            <button type="submit" className="mx-auto block px-8 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
               Login
             </button>
             <Typography color="gray" className="mt-4 text-center font-normal">
