@@ -1,10 +1,11 @@
-package com.restaurantreview.user_service.service;
+package com.restaurantreview.user_service.controller;
 
-import com.restaurantreview.user_service.controller.UserController;
 import com.restaurantreview.user_service.dto.UserDTO;
 import com.restaurantreview.user_service.dto.UserLoginRequest;
 import com.restaurantreview.user_service.model.UserAccount;
 import com.restaurantreview.user_service.repository.UserRepository;
+import com.restaurantreview.user_service.service.JwtService;
+import com.restaurantreview.user_service.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,16 +59,16 @@ public class LoginTest {
         String token = "jwt-token";
 
         when(userService.loginUser(any(UserLoginRequest.class))).thenReturn(new UserDTO(user.getId(), user.getEmail(), user.getUsername()));
-        when(jwtService.generateToken(any(String.class))).thenReturn(token);
+        when(jwtService.generateToken(any(Long.class))).thenReturn(token);
 
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
         mockMvc.perform(post("/users/login")
                         .contentType("application/json")
-                        .content("{\"email\":\"john@example.com\", \"password\":\"password123\"}"))
+                        .content(String.format("{\"email\": \"%s\", \"password\": \"%s\" }", request.getEmail(),  request.getPassword())))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(jsonPath("$.token").value(token))
-                .andExpect(jsonPath("$.user.email").value("john@example.com"))
-                .andExpect(jsonPath("$.user.username").value("john_doe"));
+                .andExpect(jsonPath("$.user.email").value(user.getEmail()))
+                .andExpect(jsonPath("$.user.username").value(user.getUsername()));
 
         verify(userService, times(1)).loginUser(any(UserLoginRequest.class));
     }
@@ -79,7 +80,7 @@ public class LoginTest {
         // Simulate invalid login (user not found or password mismatch)
         mockMvc.perform(post("/api/users/login")
                         .contentType("application/json")
-                        .content("{\"email\":\"john@example.com\", \"password\":\"wrongpassword\"}"))
+                        .content(String.format("{\"email\": \"%s\", \"password\": \"%s\" }", request.getEmail(),  request.getPassword())))
                 .andExpect(status().isNotFound());
     }
 }
