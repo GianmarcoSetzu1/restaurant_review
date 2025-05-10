@@ -18,7 +18,7 @@ public class Review {
     private Long userId;
     private Long restaurantId;
 
-    private Integer rating;
+    private Float rating;
     private String comment;
 
     @CreationTimestamp
