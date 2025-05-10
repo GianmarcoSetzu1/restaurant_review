@@ -9,6 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,6 +42,17 @@ public class ReviewServiceTest {
 
     @Test
     public void getReviewsByUserId_Success() {
-        //TODO: Write a test for getReviews
+        Long testUserId = 1L;
+        List<Review> reviewList = new ArrayList<>();
+        reviewList.add(new Review(UUID.randomUUID(), testUserId, 1L, 1.0F, "Scarso", LocalDateTime.now()));
+        reviewList.add(new Review(UUID.randomUUID(), testUserId, 2L, 6.0F, "Sufficiente", LocalDateTime.now()));
+        reviewList.add(new Review(UUID.randomUUID(), testUserId, 3L, 10.0F, "Eccellente", LocalDateTime.now()));
+
+        when(reviewRepository.findByUserId(testUserId)).thenReturn(reviewList);
+        List<Review> result = reviewService.findByUserId(testUserId);
+
+        assertEquals(reviewList, result);
+        verify(reviewRepository, times(1)).findByUserId(testUserId);
+
     }
 }

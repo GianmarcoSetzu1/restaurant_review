@@ -22,13 +22,11 @@ public class ReviewService {
         newReview.setComment(request.getComment());
         reviewRepository.save(newReview);
 
-        //TODO: Manage exceptions for null or bad formed cases
-
         return newReview;
     }
 
-    public List<Review> getReviewsByUserId(Long userId) {
-        return reviewRepository.getReviewsByUserId(userId);
+    public List<Review> findByUserId(Long userId) {
+        return reviewRepository.findByUserId(userId);
     }
 
 }

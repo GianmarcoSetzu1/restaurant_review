@@ -38,7 +38,7 @@ public class ReviewController {
     public ResponseEntity<List<Review>> getUserReviews(@RequestHeader("Authorization") String authHeader) {
         try {
             Long userId = jwtService.extractUserId(authHeader);
-            List<Review> reviews = reviewService.getReviewsByUserId(userId);
+            List<Review> reviews = reviewService.findByUserId(userId);
             return ResponseEntity.ok(reviews);
         } catch (Exception e) {
             return ResponseEntity.status(401).build();
