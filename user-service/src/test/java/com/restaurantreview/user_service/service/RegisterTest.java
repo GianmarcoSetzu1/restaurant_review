@@ -38,8 +38,8 @@ public class RegisterTest {
         UserDTO result = userService.registerUser(request);
 
         assertNotNull(result);
-        assertEquals("test@example.com", result.getEmail());
-        assertEquals("Test", result.getUsername());
+        assertEquals(request.getEmail(), result.getEmail());
+        assertEquals(request.getUsername(), result.getUsername());
         verify(userRepository, times(1)).save(any(UserAccount.class));
     }
 
@@ -47,7 +47,7 @@ public class RegisterTest {
     public void testRegisterUser_EmailAlreadyRegistered() {
         UserRegisterRequest request = new UserRegisterRequest("Test", "test@example.com", "testpassword");
 
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(new UserAccount()));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(new UserAccount()));
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.registerUser(request);
         });

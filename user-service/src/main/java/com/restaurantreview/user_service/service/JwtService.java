@@ -21,12 +21,12 @@ public class JwtService {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
-    public String generateToken(String email) {
+    public String generateToken(Long id) {
         var now = new Date();
         var expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .subject(email)
+                .subject(String.valueOf(id))
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)
