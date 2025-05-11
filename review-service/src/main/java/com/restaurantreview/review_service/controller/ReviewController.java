@@ -24,9 +24,10 @@ public class ReviewController {
     private JwtService jwtService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createReview(@Valid @RequestBody ReviewCreationRequest reviewCreationRequest) {
+    public ResponseEntity<?> createReview(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody ReviewCreationRequest reviewCreationRequest) {
         try {
-            Review newReview = reviewService.createReview(reviewCreationRequest);
+            Long userId = jwtService.extractUserId(authHeader);
+            Review newReview = reviewService.createReview(userId, reviewCreationRequest);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

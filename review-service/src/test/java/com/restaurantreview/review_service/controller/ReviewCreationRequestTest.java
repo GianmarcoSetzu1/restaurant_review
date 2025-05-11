@@ -32,21 +32,25 @@ public class ReviewCreationRequestTest {
     @MockitoBean
     private ReviewService reviewService;
 
+    String testToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZWdldGFAbGliZXJvLY5NTU3ODJ9Okhyt4ZX9j2ntGJJ8NkdS6v8w4mC1hGC8";
+
 
     @Test
     public void testValidRating() throws Exception {
-        ReviewCreationRequest validRequest = new ReviewCreationRequest(1L, 1L, 8.0f, "Good restaurant");
+        ReviewCreationRequest validRequest = new ReviewCreationRequest(1L, 8.0f, "Good restaurant");
         mockMvc.perform(post("/reviews/create")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", testToken)
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     public void testInvalidRating() throws Exception {
-        ReviewCreationRequest invalidRequest =new ReviewCreationRequest(1L, 1L, 2.3f, "Poor restaurant");
+        ReviewCreationRequest invalidRequest = new ReviewCreationRequest(1L, 2.3f, "Poor restaurant");
         mockMvc.perform(post("/reviews/create")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", testToken)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
     }

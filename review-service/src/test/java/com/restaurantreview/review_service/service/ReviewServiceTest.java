@@ -29,11 +29,12 @@ public class ReviewServiceTest {
 
     @Test
     public void createReview_Success() {
-        ReviewCreationRequest request = new ReviewCreationRequest(1L, 1L, 1.0F, "Scarso");
-        Review result = reviewService.createReview(request);
+        Long testUserId = 1L;
+        ReviewCreationRequest request = new ReviewCreationRequest(testUserId, 1.0F, "Scarso");
+        Review result = reviewService.createReview(testUserId, request);
 
         assertNotNull(result);
-        assertEquals(request.getUserId(), result.getUserId());
+        assertEquals(testUserId, result.getUserId());
         assertEquals(request.getRestaurantId(), result.getRestaurantId());
         assertEquals(request.getRating(), result.getRating());
         assertEquals(request.getComment(), result.getComment());

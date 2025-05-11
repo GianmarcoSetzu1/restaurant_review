@@ -14,9 +14,9 @@ public class ReviewService {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    public Review createReview(ReviewCreationRequest request) {
+    public Review createReview(Long userId, ReviewCreationRequest request) {
         Review newReview = new Review();
-        newReview.setUserId(request.getUserId());
+        newReview.setUserId(userId);
         newReview.setRestaurantId(request.getRestaurantId());
         newReview.setRating(request.getRating());
         newReview.setComment(request.getComment());

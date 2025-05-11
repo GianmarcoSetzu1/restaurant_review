@@ -1,9 +1,8 @@
 package com.restaurantreview.review_service.service;
 
-import io.jsonwebtoken.JwtParser;
+import com.restaurantreview.review_service.exception.AuthHeaderParsingException;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +12,39 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class JwtService {
 
-    private final JwtParser parser;
+    private final SecretKey key;
 
-    public JwtService(@Value("${jwt.secret}") String secret) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.parser = Jwts.parser().verifyWith(key).build();
+    JwtService(@Value("${jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public Long extractUserId(String token) {
-        Claims claims = extractAllClaims(token);
-        return Long.valueOf(claims.getSubject());
+    private Jws<Claims> validateToken(String token) throws JwtException {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token);
     }
 
     private Claims extractAllClaims(String token) {
-        return parser.parseEncryptedClaims(token).getPayload();
+        return validateToken(token).getPayload();
     }
+
+    public Long extractUserId(String authHeader) {
+        String bearerType = "Bearer ";
+        if (authHeader != null && authHeader.startsWith(bearerType)) {
+            String token = authHeader.substring(bearerType.length());
+            try {
+                Claims claims = extractAllClaims(token);
+                return Long.valueOf(claims.getSubject());
+            } catch (ExpiredJwtException e) {
+                throw new RuntimeException("Token expired", e);
+            } catch (JwtException e) {
+                throw new RuntimeException("Invalid token", e);
+            }
+        } else {
+            throw new AuthHeaderParsingException("Authentication header parsing failed");
+        }
+    }
+
 
 }
