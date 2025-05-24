@@ -8,6 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,11 +52,15 @@ public class ReviewServiceTest {
         reviewList.add(new Review(UUID.randomUUID(), testUserId, 2L, 6.0F, "Sufficiente", LocalDateTime.now()));
         reviewList.add(new Review(UUID.randomUUID(), testUserId, 3L, 10.0F, "Eccellente", LocalDateTime.now()));
 
-        when(reviewRepository.findByUserId(testUserId)).thenReturn(reviewList);
-        List<Review> result = reviewService.findByUserId(testUserId);
+        var pageNumber = 0;
+        var pageSize = 10;
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
 
-        assertEquals(reviewList, result);
-        verify(reviewRepository, times(1)).findByUserId(testUserId);
+        when(reviewRepository.findByUserId(testUserId, pageable)).thenReturn(new PageImpl<>(reviewList, pageable, reviewList.size()));
+        Page<Review> result = reviewService.findByUserId(testUserId, pageable);
+
+        assertEquals(reviewList, result.stream().toList());
+        verify(reviewRepository, times(1)).findByUserId(testUserId, pageable);
 
     }
 }

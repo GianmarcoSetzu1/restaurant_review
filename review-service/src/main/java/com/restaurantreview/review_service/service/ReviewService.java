@@ -6,9 +6,12 @@ import com.restaurantreview.review_service.repository.ReviewRepository;
 import com.restaurantreview.review_service.service.cache.CacheableInterface;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.slf4j.Logger;
+
 
 @Service
 public class ReviewService implements CacheableInterface {
@@ -29,8 +32,9 @@ public class ReviewService implements CacheableInterface {
         return newReview;
     }
 
-    public List<Review> findByUserId(Long userId) {
-        return reviewRepository.findByUserId(userId);
+    public Page<Review> findByUserId(Long userId, Pageable pageable) {
+        logger.info("Trying to get user reviews for id {} ", userId);
+        return reviewRepository.findByUserId(userId, pageable);
     }
 
 }
