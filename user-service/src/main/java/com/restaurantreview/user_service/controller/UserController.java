@@ -41,7 +41,7 @@ public class UserController {
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) {
         try {
             UserDTO loggedUser = userService.loginUser(userLoginRequest);
-            String jwtToken = jwtService.generateToken(loggedUser.getEmail());
+            String jwtToken = jwtService.generateToken(loggedUser.getId());
             return new ResponseEntity<>(new UserLoginResponse(jwtToken, loggedUser), HttpStatus.OK);
         } catch (UserNotRegisteredException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
