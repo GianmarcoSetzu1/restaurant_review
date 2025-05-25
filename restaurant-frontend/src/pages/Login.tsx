@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Typography } from "@material-tailwind/react";
@@ -13,7 +13,6 @@ const Login: FC = () => {
     register,
     handleSubmit,
     formState: {errors},
-    getValues,
   } = useForm<FormData>();
 
     const onSubmit: SubmitHandler<FormData> = async (data) => {
@@ -34,7 +33,6 @@ const Login: FC = () => {
 
         const result = await response.json();
         console.log("Login ok:", result);
-        setSuccessMessage("Login successful!");
 
         setTimeout(() => {
           localStorage.setItem("token", result.token);
@@ -48,7 +46,6 @@ const Login: FC = () => {
     };
 
   const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState("");
 
   return (
     <>
