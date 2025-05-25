@@ -20,49 +20,46 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reviews")
 public class ReviewController {
 
-    @Autowired
-    ReviewService reviewService;
+  @Autowired ReviewService reviewService;
 
-    @Autowired
-    private JwtService jwtService;
+  @Autowired private JwtService jwtService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createReview(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody ReviewCreationRequest reviewCreationRequest) {
-        try {
-            Long userId = jwtService.extractUserId(authHeader);
-            reviewService.createReview(userId, reviewCreationRequest);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+  @GetMapping("/")
+  public ResponseEntity<ReviewsResponse> getUserReviews(
+      @RequestHeader("Authorization") String authHeader,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int pageSize) {
+    try {
+      jwtService.verifyAuth(authHeader);
+      Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
+      Page<Review> reviewPage = reviewService.findReviews(pageable);
+      ReviewsResponse response = getReviewsResponse(reviewPage);
 
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      return ResponseEntity.status(401).build();
     }
+  }
 
-    @GetMapping("/reviews")
-    public ResponseEntity<ReviewsResponse> getUserReviews(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize
-    ) {
-        try {
-            Long userId = jwtService.extractUserId(authHeader);
-            Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
-            Page<Review> reviewPage = reviewService.findByUserId(userId, pageable);
-            ReviewsResponse response = getReviewsResponse(reviewPage);
+  private ReviewsResponse getReviewsResponse(Page<Review> page) {
+    ReviewsResponse response = new ReviewsResponse();
+    response.setContent(page.getContent());
+    response.setPageNumber(page.getNumber());
+    response.setTotalItems(page.getTotalElements());
+    response.setTotalPages(page.getTotalPages());
+    return response;
+  }
 
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).build();
-        }
+  @PostMapping("/create")
+  public ResponseEntity<?> createReview(
+      @RequestHeader("Authorization") String authHeader,
+      @Valid @RequestBody ReviewCreationRequest reviewCreationRequest) {
+    try {
+      Long userId = jwtService.extractUserId(authHeader);
+      reviewService.createReview(userId, reviewCreationRequest);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-    private ReviewsResponse getReviewsResponse(Page<Review> page) {
-        ReviewsResponse response = new ReviewsResponse();
-        response.setContent(page.getContent());
-        response.setPageNumber(page.getNumber());
-        response.setTotalItems(page.getTotalElements());
-        response.setTotalPages(page.getTotalPages());
-        return response;
-    }
-
+  }
 }
