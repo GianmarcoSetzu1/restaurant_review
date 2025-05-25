@@ -10,11 +10,12 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ReviewCreationRequest {
-    @NotNull
-    private Long restaurantId;
-    @DecimalMin("1.0")
-    @DecimalMax("10.0")
-    @ValidRating
-    private Float rating;
-    private String comment;
+  @NotNull private Long restaurantId;
+
+  @DecimalMin("1.0")
+  @DecimalMax("10.0")
+  @ValidRating
+  private Float rating;
+
+  private String comment;
 }
