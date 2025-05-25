@@ -3,7 +3,6 @@ package com.restaurantreview.review_service.service;
 import com.restaurantreview.review_service.dto.ReviewCreationRequest;
 import com.restaurantreview.review_service.model.Review;
 import com.restaurantreview.review_service.repository.ReviewRepository;
-import com.restaurantreview.review_service.service.cache.CacheableInterface;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,7 @@ import org.slf4j.Logger;
 
 
 @Service
-public class ReviewService implements CacheableInterface {
+public class ReviewService {
 
     private static final Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
