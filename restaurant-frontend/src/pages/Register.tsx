@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Typography } from "@material-tailwind/react";
@@ -14,7 +14,6 @@ const Register: FC = () => {
     register,
     handleSubmit,
     formState: {errors},
-    getValues,
   } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
@@ -36,8 +35,6 @@ const Register: FC = () => {
       const result = await response.json();
       console.log("User has been registered:", result);
 
-      setSuccessMessage("User has been registered!");
-
       setTimeout(() => {
         navigate("/login");
       }, 2000);
@@ -47,7 +44,6 @@ const Register: FC = () => {
   };
 
   const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState("");
 
   return (
     <>

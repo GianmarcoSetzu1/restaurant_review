@@ -8,6 +8,7 @@ const LayoutHeader: FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
     localStorage.removeItem("username");
     navigate("/");
   };
