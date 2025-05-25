@@ -56,7 +56,7 @@ const Login: FC = () => {
               Login
             </Typography>
             <Typography color="gray" className="mt-1 font-normal">
-              Nice to meet you! Enter your details to log in.
+              Ben tornato! Inserisci le tue credenziali.
             </Typography>
           </div>
           <form className="max-w-sm mx-auto pt-[5%]" onSubmit={handleSubmit(onSubmit)}>
@@ -94,10 +94,12 @@ const Login: FC = () => {
             <button type="submit" className="mx-auto block px-8 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
               Login
             </button>
+            {/*TODO: add a loading bar when submit is clicked*/}
+            {/*TODO: manage 404 response*/}
             <Typography color="gray" className="mt-4 text-center font-normal">
-              Already have an account?{" "}
+              Ancora non hai un account?{" "}
                 <a href="/register" className="font-medium text-gray-900">
-                  Create a new account
+                  Crea un nuovo account
                 </a>
             </Typography>
           </form>

@@ -6,7 +6,7 @@ import ReviewForm from "./ReviewForm";
 import {ChevronDown, Plus, X} from "lucide-react";
 
 const Home: FC = () => {
-  const navigate = useNavigate(); //later
+  const navigate = useNavigate(); //TODO: use to invoke user and restaurnt services to get more info
   const [successMessage, setSuccessMessage] = useState("");
   const username = localStorage.getItem("username");
   const [reviews, setReviews] = useState<any[]>([]);
