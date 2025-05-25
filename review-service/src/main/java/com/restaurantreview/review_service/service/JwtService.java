@@ -30,7 +30,7 @@ public class JwtService {
     if (authHeader != null && authHeader.startsWith(bearerType)) {
       String token = authHeader.substring(bearerType.length());
       try {
-        extractAllClaims(token);
+        validateToken(token);
       } catch (ExpiredJwtException e) {
         throw new RuntimeException("Token expired", e);
       } catch (JwtException e) {
