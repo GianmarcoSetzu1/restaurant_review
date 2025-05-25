@@ -29,6 +29,22 @@ public class JwtService {
         return validateToken(token).getPayload();
     }
 
+    public void verifyAuth(String authHeader) {
+        String bearerType = "Bearer ";
+        if (authHeader != null && authHeader.startsWith(bearerType)) {
+            String token = authHeader.substring(bearerType.length());
+            try {
+                extractAllClaims(token);
+            } catch (ExpiredJwtException e) {
+                throw new RuntimeException("Token expired", e);
+            } catch (JwtException e) {
+                throw new RuntimeException("Invalid token", e);
+            }
+        } else {
+            throw new AuthHeaderParsingException("Authentication header parsing failed");
+        }
+    }
+
     public Long extractUserId(String authHeader) {
         String bearerType = "Bearer ";
         if (authHeader != null && authHeader.startsWith(bearerType)) {
