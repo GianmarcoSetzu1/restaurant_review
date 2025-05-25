@@ -25,6 +25,6 @@ public class ReviewService {
   }
 
   public Page<Review> findReviews(Pageable pageable) {
-    return reviewRepository.findReviews(pageable);
+    return reviewRepository.findAll(pageable);
   }
 }

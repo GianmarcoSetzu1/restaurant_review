@@ -56,11 +56,11 @@ public class ReviewServiceTest {
     var pageSize = 10;
     PageRequest pageable = PageRequest.of(pageNumber, pageSize);
 
-    when(reviewRepository.findReviews(pageable))
+    when(reviewRepository.findAll(pageable))
         .thenReturn(new PageImpl<>(reviewList, pageable, reviewList.size()));
     Page<Review> result = reviewService.findReviews(pageable);
 
     assertEquals(reviewList, result.stream().toList());
-    verify(reviewRepository, times(1)).findReviews(pageable);
+    verify(reviewRepository, times(1)).findAll(pageable);
   }
 }
