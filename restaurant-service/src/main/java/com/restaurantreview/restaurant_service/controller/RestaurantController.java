@@ -28,6 +28,8 @@ public class RestaurantController {
       jwtService.verifyAuth(authHeader);
       Restaurant restaurant = restaurantService.createRestaurant(request);
       return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (JwtException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
