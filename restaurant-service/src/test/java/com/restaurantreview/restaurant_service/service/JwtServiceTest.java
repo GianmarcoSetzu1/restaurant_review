@@ -25,7 +25,7 @@ public class JwtServiceTest {
   }
 
   @Test
-  public void extractUserId_Success() {
+  public void verifyAuth_Success() {
     String token =
         Jwts.builder()
             .subject("1")
@@ -54,7 +54,7 @@ public class JwtServiceTest {
   }
 
   @Test
-  public void extractUserId_ParseFail() {
+  public void parsingFailed() {
     String invalidAuthHeader = "invalid.token.here";
     AuthHeaderParsingException ex =
         assertThrows(
@@ -64,7 +64,7 @@ public class JwtServiceTest {
   }
 
   @Test
-  public void extractUserId_Invalid() {
+  public void invalidToken() {
     String invalidAuthHeader = "Bearer invalid.token.here";
     assertThrows(JwtException.class, () -> jwtService.verifyAuth(invalidAuthHeader));
   }
