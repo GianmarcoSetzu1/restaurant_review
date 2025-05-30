@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
-
 @Data
-public class RestaurantCreationRequest {
-    @NotBlank
-    String name;
-    @URL(message = "It must be a valid URL")
-    String url;
-    RestaurantType type;
+public class RestaurantDTO {
+  @NotBlank String name;
+
+  @URL(message = "It must be a valid URL")
+  String url;
+
+  RestaurantType type;
 }

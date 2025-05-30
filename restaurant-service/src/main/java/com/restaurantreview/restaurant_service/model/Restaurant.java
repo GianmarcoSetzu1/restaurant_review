@@ -4,21 +4,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Data
 public class Restaurant {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long restaurantId;
-    String name;
-    String url;
-    RestaurantType type;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  Long restaurantId;
+
+  String name;
+  String url;
+  RestaurantType type;
+  @CreationTimestamp private LocalDateTime createdAt;
 }
