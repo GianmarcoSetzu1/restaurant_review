@@ -8,11 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserRegisterRequest {
-    @NotBlank
-    private String username;
-    @NotBlank
-    @Email
-    private String email;
-    @NotBlank
-    private String password;
+  @NotBlank private String username;
+  @NotBlank @Email private String email;
+  @NotBlank private String password;
 }
