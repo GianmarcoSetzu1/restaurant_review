@@ -8,9 +8,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserLoginRequest {
-    @NotBlank
-    @Email
-    private String email;
-    @NotBlank
-    private String password;
+  @NotBlank @Email private String email;
+  @NotBlank private String password;
 }

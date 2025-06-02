@@ -1,13 +1,17 @@
 import { Star, StarHalf, Star as StarOutline } from "lucide-react";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import axios from "axios";
 
-//todo: manage icons dynamically
 const restaurantIcons: { [key: string]: string } = {
-  pizzeria: "🍕",
-  sushi: "🍣",
   ristorante: "🍝",
-  hamburger: "🍔",
-  default: "🍽️",
+  osteria: "🍷",
+  trattoria: "🥖",
+  sushi: "🍣",
+  pizza: "🍕",
+  trapizzino: "🥪",
+  bowl: "🥗",
+  orientale: "🍜",
+  default: "🍽️"
 };
 
 const renderStars = (rating: number) => {
@@ -29,47 +33,126 @@ const renderStars = (rating: number) => {
   );
 };
 
-
 type Review = {
   id: string;
   userId: number;
   restaurantId: number;
-  restaurantType?: string; // todo: category?
   rating: number;
   comment: string;
   createdAt: string;
 };
 
-type ReviewListProps = {
-  reviews: Review[];
+type Restaurant = {
+  name: string;
+  type: string;
 };
 
-const ReviewList: FC<ReviewListProps> = ({ reviews }) => {
+type User = {
+  username: string;
+};
+
+type ReviewListProps = {
+  reviews: Review[];
+  jwtToken: string;
+};
+
+const ReviewList: FC<ReviewListProps> = ({ reviews, jwtToken }) => {
+  const [restaurantData, setRestaurantData] = useState<Record<number, Restaurant>>({});
+  const [userData, setUserData] = useState<Record<number, User>>({});
+
+  useEffect(() => {
+    const fetchRestaurantData = async () => {
+      const uniqueIds = [...new Set(reviews.map((r) => r.restaurantId))];
+      const results: Record<number, Restaurant> = {};
+
+      await Promise.all(
+          uniqueIds.map(async (id) => {
+            try {
+              const res = await axios.get(`http://localhost:8082/restaurant/restaurant/${id}`, {
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
+              });
+              results[id] = {
+                name: res.data.name,
+                type: res.data.type.toLowerCase(),
+              };
+            } catch (e) {
+              results[id] = {
+                name: `Ristorante #${id}`,
+                type: "default",
+              };
+            }
+          })
+      );
+
+      setRestaurantData(results);
+    };
+
+    const fetchUserData = async () => {
+      const uniqueIds = [...new Set(reviews.map((r) => r.userId))];
+      const results: Record<number, User> = {};
+
+      await Promise.all(
+          uniqueIds.map(async (id) => {
+            try {
+              const res = await axios.get(`http://localhost:8080/users/user/${id}`, {
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
+              });
+              results[id] = {
+                username: res.data.username,
+              };
+            } catch (e) {
+              results[id] = {
+                username: `User #${id}`,
+              };
+            }
+          })
+      );
+
+      setUserData(results);
+    };
+
+    fetchRestaurantData();
+    fetchUserData();
+  }, [reviews, jwtToken]);
+
+
+
   return (
       <ul className="space-y-6 mx-auto px-4">
-        {reviews.map((r) => (
-            <li
-                key={r.id}
-                className="p-6 bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <div className="text-xl">🍕</div> {/* It depends on the category */}
-                <div className="text-lg font-semibold text-gray-900">
-                  Ristorante #{r.restaurantId}
+        {reviews.map((r) => {
+          const restaurant = restaurantData[r.restaurantId];
+          const icon = restaurant ? restaurantIcons[restaurant.type] || restaurantIcons.default : "🍽️";
+          const restaurantName = restaurant ? restaurant.name : `Ristorante #${r.restaurantId}`;
+
+          const user = userData[r.userId];
+          const userName = user ? user.username : `User #${r.userId}`;
+
+          return (
+              <li
+                  key={r.id}
+                  className="p-6 bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="text-xl">{icon}</div>
+                  <div className="text-lg font-semibold text-gray-900">{restaurantName}</div>
                 </div>
-              </div>
 
-              <div className="text-sm text-gray-700 italic mb-3">
-                Utente {r.userId}: “{r.comment}”
-              </div>
+                <div className="text-sm text-gray-700 italic mb-3">
+                  <span className="font-bold">{userName}</span>: “{r.comment}”
+                </div>
 
-              {renderStars(r.rating)}
+                {renderStars(r.rating)}
 
-              <div className="mt-2 text-xs text-gray-500">
-                Pubblicato il: {new Date(r.createdAt).toLocaleString()}
-              </div>
-            </li>
-        ))}
+                <div className="mt-2 text-xs text-gray-500">
+                  Pubblicato il: {new Date(r.createdAt).toLocaleString()}
+                </div>
+              </li>
+          );
+        })}
       </ul>
   );
 };

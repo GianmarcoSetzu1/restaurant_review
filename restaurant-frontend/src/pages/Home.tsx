@@ -15,10 +15,10 @@ const Home: FC = () => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
+  const token = localStorage.getItem("token");
   const pageSize = 5;
 
   const fetchReviews = (page: number) => {
-    const token = localStorage.getItem("token");
     fetch(`http://localhost:8081/reviews/?page=${page}&pageSize=${pageSize}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ const Home: FC = () => {
                 Ciao {username}, le ultime recensioni:
               </Typography>
 
-              <ReviewList loading={loading} reviews={reviews} />
+              <ReviewList loading={loading} reviews={reviews} jwtToken={token} />
 
               {successMessage && (
                   <div className="mb-4 p-2 bg-green-200 text-green-800 rounded">
