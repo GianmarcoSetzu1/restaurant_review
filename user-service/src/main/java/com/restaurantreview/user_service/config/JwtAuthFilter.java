@@ -1,6 +1,5 @@
 package com.restaurantreview.user_service.config;
 
-import com.restaurantreview.user_service.exception.AuthHeaderParsingException;
 import com.restaurantreview.user_service.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -27,16 +26,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException, JwtException {
     String authHeader = request.getHeader("Authorization");
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-      String token = authHeader.substring(7);
-      if (SecurityContextHolder.getContext().getAuthentication() == null) {
-        jwtService.validateToken(token);
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(null, null, Collections.emptyList());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-      }
-    } else {
-      throw new AuthHeaderParsingException("Jwt token is not properly formatted");
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+    String token = authHeader.substring(7);
+    if (SecurityContextHolder.getContext().getAuthentication() == null) {
+      jwtService.validateToken(token);
+      UsernamePasswordAuthenticationToken authToken =
+          new UsernamePasswordAuthenticationToken(null, null, Collections.emptyList());
+      SecurityContextHolder.getContext().setAuthentication(authToken);
     }
     filterChain.doFilter(request, response);
   }
