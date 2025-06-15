@@ -56,6 +56,23 @@ public class ReviewController {
       long userId = jwtService.extractUserId();
       reviewService.createReview(userId, reviewCreationRequest);
       return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (UserNotOwnerException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @DeleteMapping("/review/{id}")
+  public ResponseEntity<?> deleteReview(@PathVariable Long id) {
+    try {
+      long userId = jwtService.extractUserId();
+      reviewService.deleteReview(userId, id);
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    } catch (UserNotOwnerException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (NoSuchElementException e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
