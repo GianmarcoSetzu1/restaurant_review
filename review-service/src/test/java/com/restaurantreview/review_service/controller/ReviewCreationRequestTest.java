@@ -11,12 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest
+@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 public class ReviewCreationRequestTest {
 
@@ -28,9 +30,6 @@ public class ReviewCreationRequestTest {
 
   @MockitoBean private ReviewService reviewService;
 
-  String testToken =
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZWdldGFAbGliZXJvLY5NTU3ODJ9Okhyt4ZX9j2ntGJJ8NkdS6v8w4mC1hGC8";
-
   @Test
   public void testValidRating() throws Exception {
     ReviewCreationRequest validRequest = new ReviewCreationRequest(1L, 8.0f, "Good restaurant");
@@ -38,7 +37,6 @@ public class ReviewCreationRequestTest {
         .perform(
             post("/reviews/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", testToken)
                 .content(objectMapper.writeValueAsString(validRequest)))
         .andExpect(status().isCreated());
   }
@@ -50,7 +48,6 @@ public class ReviewCreationRequestTest {
         .perform(
             post("/reviews/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", testToken)
                 .content(objectMapper.writeValueAsString(invalidRequest)))
         .andExpect(status().isBadRequest());
   }

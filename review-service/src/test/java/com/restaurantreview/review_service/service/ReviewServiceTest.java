@@ -10,7 +10,6 @@ import com.restaurantreview.review_service.repository.ReviewRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,12 +44,9 @@ public class ReviewServiceTest {
   public void getReviews_Success() {
     Long testUserId = 1L;
     List<Review> reviewList = new ArrayList<>();
-    reviewList.add(
-        new Review(UUID.randomUUID(), testUserId, 1L, 1.0F, "Scarso", LocalDateTime.now()));
-    reviewList.add(
-        new Review(UUID.randomUUID(), testUserId, 2L, 6.0F, "Sufficiente", LocalDateTime.now()));
-    reviewList.add(
-        new Review(UUID.randomUUID(), testUserId, 3L, 10.0F, "Eccellente", LocalDateTime.now()));
+    reviewList.add(new Review(1L, testUserId, 1L, 1.0F, "Scarso", LocalDateTime.now()));
+    reviewList.add(new Review(2L, testUserId, 2L, 6.0F, "Sufficiente", LocalDateTime.now()));
+    reviewList.add(new Review(3L, testUserId, 3L, 10.0F, "Eccellente", LocalDateTime.now()));
 
     var pageNumber = 0;
     var pageSize = 10;

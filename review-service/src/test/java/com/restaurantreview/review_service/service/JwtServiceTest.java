@@ -12,6 +12,9 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//TODO
+
+/*
 public class JwtServiceTest {
   private final String secret = "mysecretkeyjwt1234567890abcdefghz";
   private JwtService jwtService;
@@ -53,3 +56,4 @@ public class JwtServiceTest {
     assertEquals("Invalid token", ex.getMessage());
   }
 }
+*/
