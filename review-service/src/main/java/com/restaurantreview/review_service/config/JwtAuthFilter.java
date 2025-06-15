@@ -22,7 +22,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
   @Autowired private final JwtService jwtService;
-  private static final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 
   @Override
   protected void doFilterInternal(
