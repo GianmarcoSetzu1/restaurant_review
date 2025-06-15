@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurantreview.restaurant_service.dto.RestaurantDTO;
 import com.restaurantreview.restaurant_service.model.RestaurantType;
+import com.restaurantreview.restaurant_service.service.JwtService;
 import com.restaurantreview.restaurant_service.service.RestaurantService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,8 @@ public class RestaurantControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @MockitoBean private JwtService jwtService;
 
   @MockitoBean private RestaurantService restaurantService;
 
