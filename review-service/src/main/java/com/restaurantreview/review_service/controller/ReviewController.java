@@ -2,10 +2,12 @@ package com.restaurantreview.review_service.controller;
 
 import com.restaurantreview.review_service.dto.ReviewCreationRequest;
 import com.restaurantreview.review_service.dto.ReviewsResponse;
+import com.restaurantreview.review_service.exception.UserNotOwnerException;
 import com.restaurantreview.review_service.model.Review;
 import com.restaurantreview.review_service.service.JwtService;
 import com.restaurantreview.review_service.service.ReviewService;
 import jakarta.validation.Valid;
+import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin("http://localhost:5173")
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
@@ -26,11 +28,8 @@ public class ReviewController {
 
   @GetMapping("/")
   public ResponseEntity<ReviewsResponse> getUserReviews(
-      @RequestHeader("Authorization") String authHeader,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int pageSize) {
+      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
     try {
-      jwtService.verifyAuth(authHeader);
       Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
       Page<Review> reviewPage = reviewService.findReviews(pageable);
       ReviewsResponse response = getReviewsResponse(reviewPage);
@@ -52,12 +51,28 @@ public class ReviewController {
 
   @PostMapping("/create")
   public ResponseEntity<?> createReview(
-      @RequestHeader("Authorization") String authHeader,
       @Valid @RequestBody ReviewCreationRequest reviewCreationRequest) {
     try {
-      Long userId = jwtService.extractUserId(authHeader);
+      long userId = jwtService.extractUserId();
       reviewService.createReview(userId, reviewCreationRequest);
       return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (UserNotOwnerException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @DeleteMapping("/review/{id}")
+  public ResponseEntity<?> deleteReview(@PathVariable Long id) {
+    try {
+      long userId = jwtService.extractUserId();
+      reviewService.deleteReview(userId, id);
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    } catch (UserNotOwnerException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (NoSuchElementException e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

@@ -1,9 +1,7 @@
 package com.restaurantreview.restaurant_service.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.restaurantreview.restaurant_service.exception.AuthHeaderParsingException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -33,11 +31,7 @@ public class JwtServiceTest {
             .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
             .compact();
 
-    String authHeader = "Bearer " + token;
-    Assertions.assertDoesNotThrow(
-        () -> {
-          jwtService.verifyAuth(authHeader);
-        });
+    Assertions.assertDoesNotThrow(() -> jwtService.validateToken(token));
   }
 
   @Test
@@ -49,23 +43,12 @@ public class JwtServiceTest {
             .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
             .compact();
 
-    String authHeader = "Bearer " + expiredToken;
-    assertThrows(JwtException.class, () -> jwtService.verifyAuth(authHeader));
-  }
-
-  @Test
-  public void parsingFailed() {
-    String invalidAuthHeader = "invalid.token.here";
-    AuthHeaderParsingException ex =
-        assertThrows(
-            AuthHeaderParsingException.class, () -> jwtService.verifyAuth(invalidAuthHeader));
-
-    assertEquals("Authentication header parsing failed", ex.getMessage());
+    assertThrows(JwtException.class, () -> jwtService.validateToken(expiredToken));
   }
 
   @Test
   public void invalidToken() {
-    String invalidAuthHeader = "Bearer invalid.token.here";
-    assertThrows(JwtException.class, () -> jwtService.verifyAuth(invalidAuthHeader));
+    String invalidAuthHeader = "invalid.token.here";
+    assertThrows(JwtException.class, () -> jwtService.validateToken(invalidAuthHeader));
   }
 }

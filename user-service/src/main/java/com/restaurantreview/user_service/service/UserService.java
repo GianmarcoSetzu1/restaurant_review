@@ -44,6 +44,7 @@ public class UserService {
     UserAccount foundUser = userRepository.findByEmail(request.getEmail()).orElseThrow();
     if (passwordEncoder.matches(request.getPassword(), foundUser.getPassword())) {
       UserAccount response = new UserAccount();
+      response.setId(foundUser.getId());
       response.setEmail(foundUser.getEmail());
       response.setUsername(foundUser.getUsername());
       return response;

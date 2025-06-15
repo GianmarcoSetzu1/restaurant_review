@@ -1,8 +1,8 @@
 package com.restaurantreview.restaurant_service.controller;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,17 +11,20 @@ import com.restaurantreview.restaurant_service.dto.RestaurantDTO;
 import com.restaurantreview.restaurant_service.model.RestaurantType;
 import com.restaurantreview.restaurant_service.service.JwtService;
 import com.restaurantreview.restaurant_service.service.RestaurantService;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.NoSuchElementException;
+
 @WebMvcTest
+@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 public class RestaurantControllerTest {
 
@@ -32,9 +35,6 @@ public class RestaurantControllerTest {
   @MockitoBean private JwtService jwtService;
 
   @MockitoBean private RestaurantService restaurantService;
-
-  String testToken =
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZWdldGFAbGliZXJvLY5NTU3ODJ9Okhyt4ZX9j2ntGJJ8NkdS6v8w4mC1hGC8";
 
   private RestaurantDTO createTestDTO() {
     RestaurantDTO validDTO = new RestaurantDTO();
@@ -51,7 +51,6 @@ public class RestaurantControllerTest {
         .perform(
             post("/restaurant/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", testToken)
                 .content(objectMapper.writeValueAsString(validRequest)))
         .andExpect(status().isCreated());
   }
@@ -64,8 +63,7 @@ public class RestaurantControllerTest {
     mockMvc
         .perform(
             get("/restaurant/restaurant/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", testToken))
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(restaurantDTO.getName()))
         .andExpect(jsonPath("$.type").value(restaurantDTO.getType().toString()))
@@ -79,8 +77,7 @@ public class RestaurantControllerTest {
     mockMvc
         .perform(
             get("/restaurant/restaurant/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", testToken))
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 }
