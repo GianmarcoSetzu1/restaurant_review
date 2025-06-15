@@ -47,9 +47,9 @@ public class UserController {
       UserDTO user = new UserDTO(loggedUser.getEmail(), loggedUser.getUsername());
       return new ResponseEntity<>(new UserLoginResponse(jwtToken, user), HttpStatus.OK);
     } catch (UserNotRegisteredException e) {
-      return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -62,7 +62,7 @@ public class UserController {
     } catch (NoSuchElementException e) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
   }
 }
