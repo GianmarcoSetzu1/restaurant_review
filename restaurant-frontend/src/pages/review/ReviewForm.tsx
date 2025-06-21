@@ -9,6 +9,7 @@ interface ReviewFormProps {
 }
 
 const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
+    const token = localStorage.getItem("token");
     const [mode, setMode] = useState<"review" | "newRestaurant">("review");
     const [submitting, setSubmitting] = useState(false);
 
@@ -48,7 +49,10 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
         try {
             const res = await fetch("http://localhost:8081/reviews/create", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     restaurantId: Number(newReview.restaurantId),
                     rating: Number(newReview.rating),
@@ -72,7 +76,10 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
         try {
             const res = await fetch("http://localhost:8082/restaurant/create", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(newRestaurant),
             });
             if (!res.ok) throw new Error("Errore nella creazione del ristorante");
