@@ -22,7 +22,7 @@ public class Review {
   @JoinColumn(name = "id", table = "user_account")
   private Long userId;
 
-  @JoinColumn(name = "restaurantId", table = "restaurant")
+  @JoinColumn(name = "id", table = "restaurant")
   private Long restaurantId;
 
   @Min(0)

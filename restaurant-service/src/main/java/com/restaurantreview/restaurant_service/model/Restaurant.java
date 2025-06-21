@@ -1,9 +1,7 @@
 package com.restaurantreview.restaurant_service.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,8 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 @Data
 public class Restaurant {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  Long restaurantId;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  Long id;
 
   String name;
   String url;

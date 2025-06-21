@@ -25,7 +25,7 @@ public class RestaurantServiceTest {
   public void getRestaurant_Success() {
     Long restaurantId = 1L;
     Restaurant restaurant = new Restaurant();
-    restaurant.setRestaurantId(restaurantId);
+    restaurant.setId(restaurantId);
     restaurant.setName("Da Gennaro");
     restaurant.setType(RestaurantType.PIZZA);
     restaurant.setUrl("https://www.dagennaro.it");
