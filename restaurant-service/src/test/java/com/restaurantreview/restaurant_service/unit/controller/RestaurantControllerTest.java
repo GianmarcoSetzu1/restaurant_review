@@ -1,4 +1,4 @@
-package com.restaurantreview.restaurant_service.unit.controller.controller;
+package com.restaurantreview.restaurant_service.unit.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
