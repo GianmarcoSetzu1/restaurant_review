@@ -13,7 +13,7 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
     const [mode, setMode] = useState<"review" | "newRestaurant">("review");
     const [submitting, setSubmitting] = useState(false);
 
-    const [query, setQuery] = useState("");
+    const [partialName, setPartialName] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -31,17 +31,22 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
 
     useEffect(() => {
         const delay = setTimeout(() => {
-            if (query.length > 1) {
-                fetch(`http://localhost:8082/restaurant/search?query=${query}`)
+            if (partialName.length > 1) {
+                fetch(`http://localhost:8082/restaurant/search?partialName=${partialName}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
                     .then((res) => res.json())
-                    .then(setSuggestions)
+                    .then((data) => setSuggestions(data.content))
                     .catch(console.error);
             } else {
                 setSuggestions([]);
             }
         }, 300);
         return () => clearTimeout(delay);
-    }, [query]);
+    }, [partialName]);
 
     const handleSubmitReview = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -85,7 +90,7 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
             if (!res.ok) throw new Error("Errore nella creazione del ristorante");
             const restaurant = await res.json();
             setMode("review");
-            setQuery(restaurant.name);
+            setPartialName(restaurant.name);
             setNewReview((prev) => ({...prev, restaurantId: restaurant.id.toString()}));
         } catch (err: any) {
             alert(err.message);
@@ -105,8 +110,8 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
 
             {mode === "review" ? (
                 <ReviewFormFields
-                    query={query}
-                    setQuery={setQuery}
+                    partialName={partialName}
+                    setPartialName={setPartialName}
                     newReview={newReview}
                     setNewReview={setNewReview}
                     suggestions={suggestions}

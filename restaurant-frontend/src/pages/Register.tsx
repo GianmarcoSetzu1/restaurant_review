@@ -36,7 +36,7 @@ const Register: FC = () => {
       console.log("User has been registered:", result);
 
       setTimeout(() => {
-        navigate("/login");
+        navigate("/");
       }, 2000);
     } catch (error) {
       console.error("Network error:", error);

@@ -14,8 +14,8 @@ export interface Restaurant {
 }
 
 export interface ReviewFormFieldsProps {
-    query: string;
-    setQuery: React.Dispatch<React.SetStateAction<string>>;
+    partialName: string;
+    setPartialName: React.Dispatch<React.SetStateAction<string>>;
     newReview: Review;
     setNewReview: React.Dispatch<React.SetStateAction<Review>>;
     suggestions: Restaurant[];
@@ -25,8 +25,8 @@ export interface ReviewFormFieldsProps {
 }
 
 const ReviewFormFields: React.FC<ReviewFormFieldsProps> = ({
-                                                               query,
-                                                               setQuery,
+                                                               partialName,
+                                                               setPartialName,
                                                                newReview,
                                                                setNewReview,
                                                                suggestions,
@@ -36,13 +36,13 @@ const ReviewFormFields: React.FC<ReviewFormFieldsProps> = ({
                                                            }) => (
     <>
         <AutoCompleteInput
-            value={query}
+            value={partialName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setQuery(e.target.value);
+                setPartialName(e.target.value);
                 setNewReview((prev) => ({...prev, restaurantId: ""}));
             }}
             onSelect={(restaurant: Restaurant) => {
-                setQuery(restaurant.name);
+                setPartialName(restaurant.name);
                 setNewReview((prev) => ({...prev, restaurantId: restaurant.id.toString()}));
             }}
             onCreateNew={onCreateNew}
@@ -52,7 +52,7 @@ const ReviewFormFields: React.FC<ReviewFormFieldsProps> = ({
         />
         <Input
             type="number"
-            step="0.1"
+            step="0.5"
             min="0"
             max="10"
             name="rating"
