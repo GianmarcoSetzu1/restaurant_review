@@ -50,12 +50,12 @@ public class ReviewController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> createReview(
+  public ResponseEntity<Review> createReview(
       @Valid @RequestBody ReviewCreationRequest reviewCreationRequest) {
     try {
       long userId = jwtService.extractUserId();
-      reviewService.createReview(userId, reviewCreationRequest);
-      return new ResponseEntity<>(HttpStatus.CREATED);
+      Review newReview = reviewService.createReview(userId, reviewCreationRequest);
+      return new ResponseEntity<>(newReview, HttpStatus.CREATED);
     } catch (UserNotOwnerException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (Exception e) {
