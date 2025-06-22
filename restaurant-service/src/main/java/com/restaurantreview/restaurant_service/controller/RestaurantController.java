@@ -41,3 +41,14 @@ public class RestaurantController {
     }
   }
 }
+/*
+@GetMapping("/search")
+public ResponseEntity<Page<RestaurantDTO>> searchRestaurants(
+        @RequestParam String query,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+) {
+  Page<Restaurant> restaurants = restaurantService.searchRestaurants(query, PageRequest.of(page, size));
+  Page<RestaurantDTO> dtoPage = restaurants.map(RestaurantDTO::fromEntity);
+  return ResponseEntity.ok(dtoPage);
+}*/
