@@ -1,7 +1,8 @@
-package com.restaurantreview.restaurant_service.service;
+package com.restaurantreview.restaurant_service.unit.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.restaurantreview.restaurant_service.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

@@ -1,8 +1,8 @@
-package com.restaurantreview.restaurant_service.controller;
+package com.restaurantreview.restaurant_service.unit.controller;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,6 +11,7 @@ import com.restaurantreview.restaurant_service.dto.RestaurantDTO;
 import com.restaurantreview.restaurant_service.model.RestaurantType;
 import com.restaurantreview.restaurant_service.service.JwtService;
 import com.restaurantreview.restaurant_service.service.RestaurantService;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,8 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.NoSuchElementException;
 
 @WebMvcTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -61,9 +60,7 @@ public class RestaurantControllerTest {
     RestaurantDTO restaurantDTO = createTestDTO();
     when(restaurantService.getRestaurantById(id)).thenReturn(restaurantDTO);
     mockMvc
-        .perform(
-            get("/restaurant/restaurant/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON))
+        .perform(get("/restaurant/restaurant/{id}", id).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(restaurantDTO.getName()))
         .andExpect(jsonPath("$.type").value(restaurantDTO.getType().toString()))
@@ -75,9 +72,7 @@ public class RestaurantControllerTest {
     Long id = 2L;
     when(restaurantService.getRestaurantById(id)).thenThrow(new NoSuchElementException());
     mockMvc
-        .perform(
-            get("/restaurant/restaurant/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON))
+        .perform(get("/restaurant/restaurant/{id}", id).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 }
