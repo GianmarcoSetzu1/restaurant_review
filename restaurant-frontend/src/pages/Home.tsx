@@ -51,6 +51,23 @@ const Home: FC = () => {
         fetchReviews(nextPage);
     };
 
+    const handleDelete = async (reviewId: number) => {
+        if (!confirm("Sei sicuro di voler eliminare questa recensione?")) return;
+        try {
+            const res = await fetch(`http://localhost:8081/reviews/review/${reviewId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            if (!res.ok) throw new Error("Errore durante l'eliminazione");
+            setReviews(prev => prev.filter(r => r.review.id !== reviewId));
+        } catch (err: any) {
+            alert(err.message);
+        }
+    };
+
+
     return (
         <>
             <section>
@@ -66,7 +83,8 @@ const Home: FC = () => {
                             onPointerLeaveCapture={undefined}
                         />
 
-                        {token && <ReviewList loading={loading} reviews={reviews} jwtToken={token}/>}
+                        {token && <ReviewList loading={loading} reviews={reviews} handleDelete={handleDelete}
+                                              jwtToken={token}/>}
 
                         {successMessage && (
                             <div className="mb-4 p-2 bg-green-200 text-green-800 rounded">
