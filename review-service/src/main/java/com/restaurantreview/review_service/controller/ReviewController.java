@@ -9,7 +9,6 @@ import com.restaurantreview.review_service.service.ReviewService;
 import jakarta.validation.Valid;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,26 +26,15 @@ public class ReviewController {
   @Autowired private JwtService jwtService;
 
   @GetMapping("/")
-  public ResponseEntity<ReviewsResponse> getUserReviews(
+  public ResponseEntity<ReviewsResponse> getAllReviews(
       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
     try {
       Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
-      Page<Review> reviewPage = reviewService.findReviews(pageable);
-      ReviewsResponse response = getReviewsResponse(reviewPage);
-
-      return ResponseEntity.ok(response);
+      ReviewsResponse response = reviewService.findReviews(pageable);
+      return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (Exception e) {
-      return ResponseEntity.status(401).build();
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-  }
-
-  private ReviewsResponse getReviewsResponse(Page<Review> page) {
-    ReviewsResponse response = new ReviewsResponse();
-    response.setContent(page.getContent());
-    response.setPageNumber(page.getNumber());
-    response.setTotalItems(page.getTotalElements());
-    response.setTotalPages(page.getTotalPages());
-    return response;
   }
 
   @PostMapping("/create")

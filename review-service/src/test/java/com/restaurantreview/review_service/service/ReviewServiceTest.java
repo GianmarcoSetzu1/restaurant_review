@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.restaurantreview.review_service.dto.ReviewCreationRequest;
+import com.restaurantreview.review_service.dto.ReviewResponse;
+import com.restaurantreview.review_service.dto.ReviewsResponse;
 import com.restaurantreview.review_service.model.Review;
 import com.restaurantreview.review_service.repository.ReviewRepository;
 import java.time.LocalDateTime;
@@ -15,12 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
+
+  @Mock JwtService jwtService;
 
   @Mock private ReviewRepository reviewRepository;
 
@@ -54,9 +57,12 @@ public class ReviewServiceTest {
 
     when(reviewRepository.findAll(pageable))
         .thenReturn(new PageImpl<>(reviewList, pageable, reviewList.size()));
-    Page<Review> result = reviewService.findReviews(pageable);
 
-    assertEquals(reviewList, result.stream().toList());
+    ReviewsResponse result = reviewService.findReviews(pageable);
+
+    List<ReviewResponse> expected =
+        reviewList.stream().map(review -> new ReviewResponse(review, false)).toList();
+    assertEquals(expected, result.getContent());
     verify(reviewRepository, times(1)).findAll(pageable);
   }
 }
