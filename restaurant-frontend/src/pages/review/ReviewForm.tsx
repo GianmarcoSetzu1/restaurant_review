@@ -1,4 +1,4 @@
-import {FC, useState, useEffect} from "react";
+import {FC, useEffect, useState} from "react";
 import ReviewFormFields from "../types/ReviewFormFields.tsx";
 import NewRestaurantForm from "../restaurant/NewRestaurantForm.tsx";
 import {Button} from "@material-tailwind/react";
@@ -17,6 +17,10 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
     const [suggestions, setSuggestions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const pageSize = 5
+
     const [newReview, setNewReview] = useState({
         restaurantId: "",
         rating: "",
@@ -29,22 +33,30 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
         type: "RISTORANTE",
     });
 
+    const fetchSuggestions = async (reset = false) => {
+        if (partialName.length <= 1) return;
+        const currentPage = reset ? 0 : page;
+        try {
+            const res = await fetch(`http://localhost:8082/restaurant/search?partialName=${partialName}&page=${currentPage}&pageSize=${pageSize}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await res.json();
+            setHasMore(!data.last);
+            setPage(currentPage + 1);
+            setSuggestions(prev => reset ? data.content : [...prev, ...data.content]);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         const delay = setTimeout(() => {
-            if (partialName.length > 1) {
-                fetch(`http://localhost:8082/restaurant/search?partialName=${partialName}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then((res) => res.json())
-                    .then((data) => setSuggestions(data.content))
-                    .catch(console.error);
-            } else {
-                setSuggestions([]);
-            }
+            fetchSuggestions(true);
         }, 300);
+
         return () => clearTimeout(delay);
     }, [partialName]);
 
@@ -114,7 +126,9 @@ const ReviewForm: FC<ReviewFormProps> = ({onSuccess}) => {
                     setPartialName={setPartialName}
                     newReview={newReview}
                     setNewReview={setNewReview}
+                    fetchSuggestions={fetchSuggestions}
                     suggestions={suggestions}
+                    hasMore={hasMore}
                     showDropdown={showDropdown}
                     setShowDropdown={setShowDropdown}
                     onCreateNew={() => setMode("newRestaurant")}

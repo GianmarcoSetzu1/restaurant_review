@@ -48,10 +48,10 @@ public class RestaurantController {
   public ResponseEntity<Page<IdAndNameDTO>> searchRestaurantsByName(
       @RequestParam String partialName,
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size) {
+      @RequestParam(defaultValue = "10") int pageSize) {
     try {
       Page<IdAndNameDTO> response =
-          restaurantService.searchRestaurantsByName(partialName, PageRequest.of(page, size));
+          restaurantService.searchRestaurantsByName(partialName, PageRequest.of(page, pageSize));
       return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (NoSuchElementException e) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
