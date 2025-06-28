@@ -18,7 +18,9 @@ export interface ReviewFormFieldsProps {
     setPartialName: React.Dispatch<React.SetStateAction<string>>;
     newReview: Review;
     setNewReview: React.Dispatch<React.SetStateAction<Review>>;
+    fetchSuggestions: (reset: boolean) => Promise<void>;
     suggestions: Restaurant[];
+    hasMore: boolean;
     showDropdown: boolean;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     onCreateNew: () => void;
@@ -29,7 +31,9 @@ const ReviewFormFields: React.FC<ReviewFormFieldsProps> = ({
                                                                setPartialName,
                                                                newReview,
                                                                setNewReview,
+                                                               fetchSuggestions,
                                                                suggestions,
+                                                               hasMore,
                                                                showDropdown,
                                                                setShowDropdown,
                                                                onCreateNew,
@@ -46,7 +50,9 @@ const ReviewFormFields: React.FC<ReviewFormFieldsProps> = ({
                 setNewReview((prev) => ({...prev, restaurantId: restaurant.id.toString()}));
             }}
             onCreateNew={onCreateNew}
+            fetchSuggestions={fetchSuggestions}
             suggestions={suggestions}
+            hasMore={hasMore}
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
         />
