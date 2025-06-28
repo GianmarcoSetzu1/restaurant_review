@@ -1,6 +1,8 @@
 package com.restaurantreview.review_service.service;
 
 import com.restaurantreview.review_service.dto.ReviewCreationRequest;
+import com.restaurantreview.review_service.dto.ReviewResponse;
+import com.restaurantreview.review_service.dto.ReviewsResponse;
 import com.restaurantreview.review_service.exception.UserNotOwnerException;
 import com.restaurantreview.review_service.model.Review;
 import com.restaurantreview.review_service.repository.ReviewRepository;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReviewService {
+
+  @Autowired JwtService jwtService;
 
   @Autowired private ReviewRepository reviewRepository;
 
@@ -32,7 +36,24 @@ public class ReviewService {
     reviewRepository.delete(foundReview);
   }
 
-  public Page<Review> findReviews(Pageable pageable) {
-    return reviewRepository.findAll(pageable);
+  public ReviewsResponse findReviews(Pageable pageable) {
+    Page<Review> foundReviews = reviewRepository.findAll(pageable);
+    Page<ReviewResponse> reviewResponsePage = foundReviews.map(this::addDeletable);
+    return getReviewsResponse(reviewResponsePage);
+  }
+
+  private ReviewResponse addDeletable(Review review) {
+    Long userId = jwtService.extractUserId();
+    if (userId.equals(review.getUserId())) return new ReviewResponse(review, true);
+    return new ReviewResponse(review, false);
+  }
+
+  private ReviewsResponse getReviewsResponse(Page<ReviewResponse> page) {
+    ReviewsResponse response = new ReviewsResponse();
+    response.setContent(page.getContent());
+    response.setPageNumber(page.getNumber());
+    response.setTotalItems(page.getTotalElements());
+    response.setTotalPages(page.getTotalPages());
+    return response;
   }
 }
