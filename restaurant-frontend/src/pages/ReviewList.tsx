@@ -178,7 +178,7 @@ const ReviewList: FC<ReviewListProps> = ({reviews, handleDelete, jwtToken}) => {
                         {renderStars(r.review.rating)}
 
                         <div className="mt-2 text-xs text-gray-500">
-                            Pubblicato il: {new Date(r.review.createdAt).toLocaleString()}
+                            Pubblicato il: {new Date(r.review.createdAt).toLocaleString("it-IT", { timeZone: "UTC" })}
                         </div>
                     </li>
                 );
