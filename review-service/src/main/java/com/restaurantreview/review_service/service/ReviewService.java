@@ -26,8 +26,7 @@ public class ReviewService {
     return newReview;
   }
 
-  public void deleteReview(Long userId, Long reviewId)
-      throws NoSuchElementException {
+  public void deleteReview(Long userId, Long reviewId) throws NoSuchElementException {
     Review foundReview = reviewRepository.findById(reviewId).orElseThrow();
     if (!foundReview.getUserId().equals(userId)) throw new UserNotOwnerException();
     reviewRepository.delete(foundReview);
